@@ -150,22 +150,18 @@ int main() {
     list1.insert_back(10);
     list1.insert_back(20);
     list1.insert_back(30);
-
     std::cout << list1 << std::endl;
 
     for (int i = 0; i < 10; ++i)
     {
         list1.insert_front(i);
     }
-
     std::cout << list1 << std::endl;
 
     list1.insert_front(100);
-
     std::cout << list1 << std::endl;
 
     list1.insert_after_N(50, 100);
-
     std::cout << list1 << std::endl;
 
     list1.delete_front();
