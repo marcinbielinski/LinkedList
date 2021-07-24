@@ -1,6 +1,9 @@
 #include <memory>
 #include <iostream>
 
+template <typename T> class LinkedList;
+template <typename T> std::ostream& operator << (std::ostream&, const LinkedList<T>&);
+
 template <typename T>
 struct Node
 {
@@ -44,7 +47,6 @@ public:
             }
             else
             {
-                std::cout << "Node doesn't exist." << std::endl;
                 break;
             }
         }
@@ -70,7 +72,22 @@ public:
             head_node = std::move(new_node);
         }
     }
-    void print_list()
+
+    void delete_front()
+    {
+        if (!head_node)
+        {
+            std::cout << "List is empty!" << std::endl;
+        }
+        else
+        {
+            std::unique_ptr<Node<T>> temporary_node = std::move(head_node);
+            head_node = std::move(temporary_node->next_node);
+        }
+
+    }
+
+    [[maybe_unused]] void print_list()
     {
         if (!head_node)
         {
@@ -87,9 +104,46 @@ public:
         }
     }
 
+    // overload ostream operator<< declaration
+    friend std::ostream& operator<< <T>(std::ostream& os, const LinkedList<T>& list);
+
+    void clean()
+    {
+        std::cout << "Performing clean-up!" << std::endl;
+        while (head_node)
+        {
+            head_node = std::move(head_node->next_node);
+        }
+    }
+    ~LinkedList()
+    {
+        clean();
+    }
+
 private:
     std::unique_ptr<Node<T>> head_node;
 };
+
+// overloaded ostream operator << definition
+template <typename T>
+std::ostream& operator<< (std::ostream& os, const LinkedList<T>& list)
+{
+    Node<T>* head_node = list.head_node.get();
+    while (head_node)
+    {
+        if (head_node->next_node != nullptr)
+        {
+            os << head_node->data << '-';
+            head_node = head_node->next_node.get();
+        }
+        else
+        {
+            os << head_node->data;
+            head_node = head_node->next_node.get();
+        }
+    }
+    return os;
+}
 
 int main() {
     LinkedList<int> list1;
@@ -97,9 +151,26 @@ int main() {
     list1.insert_back(20);
     list1.insert_back(30);
 
+    std::cout << list1 << std::endl;
+
+    for (int i = 0; i < 10; ++i)
+    {
+        list1.insert_front(i);
+    }
+
+    std::cout << list1 << std::endl;
+
     list1.insert_front(100);
 
-    list1.insert_after_N(50, 10);
-    list1.print_list();
+    std::cout << list1 << std::endl;
+
+    list1.insert_after_N(50, 100);
+
+    std::cout << list1 << std::endl;
+
+    list1.delete_front();
+    std::cout << list1 << std::endl;
+
+//    list1.print_list();
     return 0;
 }
