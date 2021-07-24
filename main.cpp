@@ -104,12 +104,24 @@ public:
         }
     }
 
+    void reverse_me()
+    {
+        LinkedList<T> temp_list;
+        Node<T>* root_node = head_node.get();
+        while (root_node)
+        {
+            temp_list.insert_front(root_node->data);
+            root_node = root_node->next_node.get();
+        }
+        performCleanUp();
+        head_node = std::move(temp_list.head_node);
+    }
+
     // overload ostream operator<< declaration
     friend std::ostream& operator<< <T>(std::ostream& os, const LinkedList<T>& list);
 
-    void clean()
+    void performCleanUp()
     {
-        std::cout << "Performing clean-up!" << std::endl;
         while (head_node)
         {
             head_node = std::move(head_node->next_node);
@@ -117,7 +129,7 @@ public:
     }
     ~LinkedList()
     {
-        clean();
+        performCleanUp();
     }
 
 private:
@@ -167,6 +179,8 @@ int main() {
     list1.delete_front();
     std::cout << list1 << std::endl;
 
+    list1.reverse_me();
+    std::cout << list1 << std::endl;
 //    list1.print_list();
     return 0;
 }
